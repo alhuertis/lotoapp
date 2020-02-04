@@ -29,7 +29,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let record of records;let i = index;" [ngClass]="{'bg-danger': record.descartado}">
-            <td > <span>{{record.numero}}</span> </td>
+            <td> <span>{{record.numero}}</span> </td>
             <td> <span>{{record.apariciones}}</span> </td>
             <td><i class="fas fa-trash" (click)="descartarNumero(i)"></i></td>
           </tr>
