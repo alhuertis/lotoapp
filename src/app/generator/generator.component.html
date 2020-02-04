@@ -1,0 +1,45 @@
+<!-- Image and text -->
+<nav class="navbar navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">
+    <img src="../../assets/img/loteria_logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+    LotoAPP Generator
+  </a>
+</nav>
+
+<div class="container-fluid">
+
+  <div class="row" style="padding-top: 30px;">
+
+    <div class="col-3">
+      <div class="form-group">
+          <input type="file" #csvReader name="Upload CSV" id="txtFileUpload" (change)="uploadListener($event)" accept=".csv" />
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-1">
+      <table class="table table-sm text-center table-hover table-dark table-bordered table-estadisticas" *ngIf="records.length > 0">
+        <thead>
+          <tr>
+            <th>Número </th>
+            <th>Apariciones </th>
+            <th> </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of records;let i = index;" [ngClass]="{'bg-danger': record.descartado}">
+            <td > <span>{{record.numero}}</span> </td>
+            <td> <span>{{record.apariciones}}</span> </td>
+            <td><i class="fas fa-trash" (click)="descartarNumero(i)"></i></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+
+
+
