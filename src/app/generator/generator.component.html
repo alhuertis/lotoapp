@@ -12,30 +12,82 @@
 
     <div class="col-3">
       <div class="form-group">
-          <input type="file" #csvReader name="Upload CSV" id="txtFileUpload" (change)="uploadListener($event)" accept=".csv" />
+          <input type="file" class="btn btn-info" #csvReader name="Upload CSV" id="txtFileUpload" (change)="uploadListener($event)" accept=".csv" />
+      </div>
+
+      <div class="row">
+        <div class="col-1">
+          <table class="table table-sm text-center table-hover table-dark table-bordered table-estadisticas" *ngIf="records.length > 0">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Número </th>
+                <th scope="col">Apariciones </th>
+                <th scope="col"> </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let record of records;let i = index;" [ngClass]="{'bg-danger': record.descartado}">
+                <th scope="row">{{i}}</th>
+                <td> <span>{{record.numero}}</span> </td>
+                <td> <span>{{record.apariciones}}</span> </td>
+                <td><i class="fas fa-trash" (click)="descartarNumero(i)"></i></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="col-1">
-      <table class="table table-sm text-center table-hover table-dark table-bordered table-estadisticas" *ngIf="records.length > 0">
-        <thead>
-          <tr>
-            <th>Número </th>
-            <th>Apariciones </th>
-            <th> </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let record of records;let i = index;" [ngClass]="{'bg-danger': record.descartado}">
-            <td> <span>{{record.numero}}</span> </td>
-            <td> <span>{{record.apariciones}}</span> </td>
-            <td><i class="fas fa-trash" (click)="descartarNumero(i)"></i></td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="col-md-9" *ngIf="generar">
+      <div class="row">
+        <div class="col-md-7 " >
+          <h3>Rango de suma: {{rangeValues[0] + ' - ' + rangeValues[1]}}</h3>
+          <p-slider name="slider" [(ngModel)]="rangeValues" [range]="true" [min]="0" [max]="300"></p-slider>
+        </div>
+
+        <div class="col-md-1 m-2">
+          <button type="button" class="btn btn-info" (click)="generarApuesta()">Generar</button>
+        </div>
+        <div class="col-md-2 m-2">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <button class="btn btn-outline-info" type="button" id="button-addon1" (click)="generarNumeroApuetas(generarPorNumero.value)" >Generar</button>
+            </div>
+            <input type="number" class="form-control" #generarPorNumero placeholder="" >
+          </div>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-10">
+          <table class="table table-sm text-center table-hover table-dark table-bordered table-estadisticas" *ngIf="records.length > 0">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">N1 </th>
+                <th scope="col">N2 </th>
+                <th scope="col">N3 </th>
+                <th scope="col">N4 </th>
+                <th scope="col">N5 </th>
+                <th scope="col">N6 </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let apuesta of apuestas;let i = index;">
+                <th scope="row">{{i}}</th>
+                <td *ngFor="let numero of apuesta.combinacion"> <span>{{numero}}</span> </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+
+
     </div>
+
   </div>
 
 </div>
