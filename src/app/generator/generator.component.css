@@ -2,3 +2,7 @@
 .table-estadisticas i:hover{
   cursor: pointer;
 }
+
+.acciones-generar .btn-md{
+  padding: 8px !important;
+}

@@ -1,7 +1,8 @@
 import { Apuesta } from './../Apuesta';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
 import { CSVRecord } from '../CSVRecord';
+import { NumerosLoto } from '../NumerosLoto';
+import { ExcelService } from '../services/excel.service';
 
 
 
@@ -15,13 +16,18 @@ export class GeneratorComponent implements OnInit {
 
   public records: CSVRecord[] = [];
   @ViewChild('csvReader', {static: false}) csvReader: any;
-  public rangeValues: number[] = [110, 190];
+  public rangeValues: number[] = [110, 200];
   public generar = false;
   public apuestas: Apuesta[] = [];
+  public contadorNumeros: NumerosLoto[] = [];
 
-  constructor() { }
+  constructor(private excelService: ExcelService) { }
 
   ngOnInit() {
+
+    for (let i = 0; i < 49; i++) {
+      this.contadorNumeros[i] = new NumerosLoto(i + 1);
+    }
   }
 
   uploadListener($event: any): void {
@@ -43,7 +49,7 @@ export class GeneratorComponent implements OnInit {
 
         this.records = this.getDataRecordsArrayFromCSVFile(csvRecordsArray, headersRow.length);
 
-        this.sort();
+        this.sortByApariciones();
         this.generar = true;
       };
 
@@ -90,10 +96,24 @@ export class GeneratorComponent implements OnInit {
     this.records = [];
   }
 
-  sort() {
+  sortByNumero() {
+    console.log('Ordenando');
+    this.records.sort((a, b) => {
+      return (a as CSVRecord).numero - (b as CSVRecord).numero;
+    });
+  }
+
+  sortByApariciones() {
     console.log('Ordenando');
     this.records.sort((a, b) => {
       return (a as CSVRecord).apariciones - (b as CSVRecord).apariciones;
+    }).reverse();
+  }
+
+  sortByContador() {
+    console.log('Ordenando');
+    this.contadorNumeros.sort((a, b) => {
+      return (a as NumerosLoto).contador - (b as NumerosLoto).contador;
     }).reverse();
   }
 
@@ -110,6 +130,7 @@ export class GeneratorComponent implements OnInit {
 
   generarApuesta() {
 
+    this.sortByApariciones();
     console.log('Rango seleccionado ' + this.rangeValues);
     let apuesta: Apuesta = this.crearCombinacion();
 
@@ -120,6 +141,13 @@ export class GeneratorComponent implements OnInit {
 
     // La añado a la lista de apuestas
     this.apuestas.push(apuesta);
+
+    // Actualizamos el contador de apariciones por cada combinación que se añada
+    apuesta.combinacion.forEach(element => {
+      this.contadorNumeros.filter(n => n.numero === Number(element)).map((x, y) => { x.contador += 1; });
+    });
+
+    this.sortByContador(); // Ordenamos el contador de apariciones de mayor a menos
 
   }
 
@@ -139,7 +167,7 @@ export class GeneratorComponent implements OnInit {
 
     for (let i = 2; i < 6; i++) {
       rand = this.getRandomArbitrary(7, 43);
-      while (this.records[rand].descartado) {
+      while (this.records[rand].descartado || apuesta.estaRepetido(this.records[rand].numero)) {
         rand = this.getRandomArbitrary(7, 43);
       }
 
@@ -178,12 +206,59 @@ export class GeneratorComponent implements OnInit {
       return false;
     }
 
-    // Comprobar que no se repiten (esto igual puede ser mientras se va añadiendo el numero)
-
     // Comprobar que no sean todos pares o impares
+    const impares = apuesta.combinacion.filter(n => n % 2);
+    if (impares.length < 2 || impares.length > 4) { // Solo contemplamos pares/impares de la siguiente forma: 4/2, 3/3, 2/4.
+      console.log('Descartamos por no cumplir pares/impares de la siguiente forma: 4/2, 3/3, 2/4');
+      return false;
+    }
+
+    // Comprobar que la combinación no haya salido ya
+    const repetidos = this.apuestas.filter(n => n.combinacion === apuesta.combinacion);
+    if (repetidos.length > 0) {
+      return false;
+    }
+
+    // Comprobar figura Bajos/Altos. Aceptados: 4/2, 3/3 y 2/4
+    const bajos = apuesta.combinacion.filter(n => n <= 25);
+    if (bajos.length  < 2 || bajos.length > 4) {
+      console.log('Descartamos por no cumplir bajos/altos de la siguiente forma: 4/2, 3/3, 2/4');
+      return false;
+    }
+
+    // Comprobamos las figuras de seguidos para aceptar: 2/1/1/1/1 y 1/1/1/1/1/1
+    let cont = 0;
+    for (let i = 1; i <= apuesta.combinacion.length; i++) {
+      if (Number(apuesta.combinacion[i - 1]) + 1 === Number(apuesta.combinacion[i])) {
+        cont++;
+      }
+    }
+    if (cont > 1) {
+      console.log('Descartamos por no cumplir figura de seguidos de la siguiente forma: 2/1/1/1/1 y 1/1/1/1/1/1');
+      return false;
+    }
+
 
     return true;
   }
+
+  marcarApuesta(num: number) {
+    this.apuestas[num].marcada = !this.apuestas[num].marcada;
+  }
+
+  limpiar() {
+    for (let i = 0; i < 49; i++) {
+      this.contadorNumeros[i] = new NumerosLoto(i + 1);
+    }
+    this.apuestas = [];
+  }
+
+  exportAsXLSX(): void {
+    if (this.apuestas.length > 0) {
+      this.excelService.exportAsExcelFile(this.apuestas, 'Geloto');
+    }
+  }
+
 
 
 }

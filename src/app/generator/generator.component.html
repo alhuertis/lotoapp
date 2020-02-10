@@ -2,7 +2,7 @@
 <nav class="navbar navbar-dark bg-dark">
   <a class="navbar-brand" href="#">
     <img src="../../assets/img/loteria_logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
-    LotoAPP Generator
+    GELOTO
   </a>
 </nav>
 
@@ -16,54 +16,80 @@
       </div>
 
       <div class="row">
-        <div class="col-1">
+        <div class="col-sm-7">
           <table class="table table-sm text-center table-hover table-dark table-bordered table-estadisticas" *ngIf="records.length > 0">
             <thead>
               <tr>
                 <th scope="col">#</th>
-                <th scope="col">Número </th>
-                <th scope="col">Apariciones </th>
+                <th scope="col" class="pointer" (click)="sortByNumero()">Número</th>
+                <th scope="col" class="pointer" (click)="sortByApariciones()">Apariciones</th>
                 <th scope="col"> </th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let record of records;let i = index;" [ngClass]="{'bg-danger': record.descartado}">
-                <th scope="row">{{i}}</th>
+                <th scope="row">{{i+1}}</th>
                 <td> <span>{{record.numero}}</span> </td>
                 <td> <span>{{record.apariciones}}</span> </td>
-                <td><i class="fas fa-trash" (click)="descartarNumero(i)"></i></td>
+                <td (click)="descartarNumero(i)" class="pointer"><i class="fas fa-trash"></i></td>
               </tr>
             </tbody>
           </table>
         </div>
+
+        <div class="col-sm-5">
+          <table class="table table-sm text-center table-hover table-dark table-bordered table-estadisticas" *ngIf="records.length > 0">
+            <thead>
+              <tr>
+                <th scope="col">Num </th>
+                <th scope="col">Cont </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let num of contadorNumeros;let i = index;">
+                <td> <span>{{num.numero}}</span> </td>
+                <td> <span>{{num.contador}}</span> </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
 
-    <div class="col-md-9" *ngIf="generar">
+    <div class="col-md-9 acciones-generar" *ngIf="generar">
       <div class="row">
-        <div class="col-md-7 " >
+        <div class="col-md-4" >
           <h3>Rango de suma: {{rangeValues[0] + ' - ' + rangeValues[1]}}</h3>
           <p-slider name="slider" [(ngModel)]="rangeValues" [range]="true" [min]="0" [max]="300"></p-slider>
         </div>
 
-        <div class="col-md-1 m-2">
-          <button type="button" class="btn btn-info" (click)="generarApuesta()">Generar</button>
-        </div>
-        <div class="col-md-2 m-2">
-          <div class="input-group mb-3">
+        <div class="col-md-2">
+          <div class="input-group pt-2">
             <div class="input-group-prepend">
-              <button class="btn btn-outline-info" type="button" id="button-addon1" (click)="generarNumeroApuetas(generarPorNumero.value)" >Generar</button>
+              <button class="btn btn-outline-info" type="button" id="button-addon1" (click)="generarNumeroApuetas(generarPorNumero.value)" ><i class="fas fa-random fa-sm"> Generar</i></button>
             </div>
             <input type="number" class="form-control" #generarPorNumero placeholder="" >
           </div>
         </div>
 
+        <div class="col-md-1">
+          <button type="button" class="btn btn-info btn-md" (click)="generarApuesta()"> <i class="fas fa-random fa-sm"> Generar</i></button>
+        </div>
+
+        <div class="col-md-1">
+          <button type="button" class="btn btn-info btn-md" (click)="limpiar()"><i class="fas fa-broom fa-sm"> Clean </i> </button>
+        </div>
+        <div class="col-md-1">
+          <button type="button" class="btn btn-info btn-md" (click)="exportAsXLSX()"><i class="fas fa-file-excel fa-sm"> Export</i> </button>
+        </div>
+
       </div>
 
       <div class="row">
-        <div class="col-10">
-          <table class="table table-sm text-center table-hover table-dark table-bordered table-estadisticas" *ngIf="records.length > 0">
-            <thead>
+        <div class="col-10 pt-2">
+          <table class="table table-sm text-center table-hover table-borderless table-striped  table-estadisticas" *ngIf="records.length > 0">
+            <thead class="thead-dark">
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">N1 </th>
@@ -72,12 +98,14 @@
                 <th scope="col">N4 </th>
                 <th scope="col">N5 </th>
                 <th scope="col">N6 </th>
+                <th scope="col">SUMA </th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let apuesta of apuestas;let i = index;">
-                <th scope="row">{{i}}</th>
+              <tr *ngFor="let apuesta of apuestas;let i = index;"  [ngClass]="{'bg-success': apuesta.marcada}" style="cursor: pointer;" (click)="marcarApuesta(i)">
+                <th scope="row">{{i+1}}</th>
                 <td *ngFor="let numero of apuesta.combinacion"> <span>{{numero}}</span> </td>
+                <td> <span>{{apuesta.getSuma()}}</span> </td>
               </tr>
             </tbody>
           </table>
