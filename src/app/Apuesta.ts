@@ -14,7 +14,7 @@ export class Apuesta {
     console.log(this.combinacion);
   }
 
-  getSuma(){
+  getSuma() {
     let suma = 0;
     for (const item of this.combinacion) {
       suma += Number(item);

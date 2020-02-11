@@ -255,7 +255,11 @@ export class GeneratorComponent implements OnInit {
 
   exportAsXLSX(): void {
     if (this.apuestas.length > 0) {
-      this.excelService.exportAsExcelFile(this.apuestas, 'Geloto');
+      const datos: any[] = [];
+      for (const item of this.apuestas) {
+        datos.push(item.combinacion);
+      }
+      this.excelService.exportAsExcelFile(datos, 'Geloto');
     }
   }
 
