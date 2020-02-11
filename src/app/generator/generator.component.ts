@@ -25,9 +25,7 @@ export class GeneratorComponent implements OnInit {
 
   ngOnInit() {
 
-    for (let i = 0; i < 49; i++) {
-      this.contadorNumeros[i] = new NumerosLoto(i + 1);
-    }
+    this.resetContadorNumeros();
   }
 
   uploadListener($event: any): void {
@@ -140,15 +138,19 @@ export class GeneratorComponent implements OnInit {
     }
 
     // La añado a la lista de apuestas
-    this.apuestas.push(apuesta);
+    this.apuestas.unshift(apuesta);
 
     // Actualizamos el contador de apariciones por cada combinación que se añada
+    this.actualizarContadores(apuesta);
+    // Ordenamos el contador de apariciones de mayor a menos
+    this.sortByContador();
+
+  }
+
+  actualizarContadores(apuesta: Apuesta) {
     apuesta.combinacion.forEach(element => {
       this.contadorNumeros.filter(n => n.numero === Number(element)).map((x, y) => { x.contador += 1; });
     });
-
-    this.sortByContador(); // Ordenamos el contador de apariciones de mayor a menos
-
   }
 
 
@@ -239,6 +241,32 @@ export class GeneratorComponent implements OnInit {
     }
 
 
+    // Comprobamos que se cumpla la estadísta 'Terminaciones iguales' de la siguiente forma: 2/2/1/1, 2/1/1/1/1 ó 1/1/1/1/1/1
+    // Para ello nos basamos en un sistema de contador por iteraciones, si se encuentra 3 repeticiones paramos, y si llega al final
+    // y el contador es igual a 2 quiere decir que se cumple y como maximo encontró 2/2/1/1
+    // pruebas -> apuesta.combinacion = ['2', '6', '14', '36', '32', '47'];
+    cont = 0;
+    let repSeguidas;
+    for (let i = 0; i < 6; i++) {
+      repSeguidas = 0;
+
+      for (let x = i + 1; x < 6; x++) {
+        if (Number(apuesta.combinacion[i] % 10) === Number(apuesta.combinacion[x] % 10)) {
+          repSeguidas++;
+          cont++;
+        }
+        if (repSeguidas > 1) {
+          console.log('Descartamos por no cumplir Terminaciones iguales de la siguiente forma: 2/2/1/1, 2/1/1/1/1 ó 1/1/1/1/1/1');
+          return false;
+        }
+      }
+    }
+    if (cont > 2) {
+      console.log('Descartamos por no cumplir Terminaciones iguales de la siguiente forma: 2/2/1/1, 2/1/1/1/1 ó 1/1/1/1/1/1');
+      return false;
+    }
+
+
     return true;
   }
 
@@ -263,6 +291,30 @@ export class GeneratorComponent implements OnInit {
     }
   }
 
+
+  desmarcarNumeros() {
+    this.records.forEach( item => {
+      if (item.descartado) {
+        item.descartado = false;
+      }
+    });
+  }
+
+  borrarApuesta(index: number) {
+    this.apuestas.splice(index, 1);
+    this.resetContadorNumeros();
+    this.apuestas.forEach(item => {
+      this.actualizarContadores(item);
+    });
+    this.sortByContador();
+  }
+
+
+  resetContadorNumeros() {
+    for (let i = 0; i < 49; i++) {
+      this.contadorNumeros[i] = new NumerosLoto(i + 1);
+    }
+  }
 
 
 }

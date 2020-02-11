@@ -1,7 +1,7 @@
 <!-- Image and text -->
 <nav class="navbar navbar-dark bg-dark">
   <a class="navbar-brand" href="#">
-    <img src="../../assets/img/loteria_logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+    <img src="../../assets/img/loteria_logo.png" width="30" height="30" class="d-inline-block align-top ml-4" alt="">
     GELOTO
   </a>
 </nav>
@@ -12,10 +12,10 @@
 
     <div class="col-3">
       <div class="form-group">
-          <input type="file" class="btn btn-info" #csvReader name="Upload CSV" id="txtFileUpload" (change)="uploadListener($event)" accept=".csv" />
+          <input type="file" class="btn btn-info btn-sm" #csvReader name="Upload CSV" id="txtFileUpload" (change)="uploadListener($event)" accept=".csv" />
       </div>
 
-      <div class="row">
+      <div class="row pt-1">
         <div class="col-sm-7">
           <table class="table table-sm text-center table-hover table-dark table-bordered table-estadisticas" *ngIf="records.length > 0">
             <thead>
@@ -23,7 +23,7 @@
                 <th scope="col">#</th>
                 <th scope="col" class="pointer" (click)="sortByNumero()">Número</th>
                 <th scope="col" class="pointer" (click)="sortByApariciones()">Apariciones</th>
-                <th scope="col"> </th>
+                <th scope="col" class="pointer" (click)="desmarcarNumeros()"><i class="fas fa-recycle"></i> </th>
               </tr>
             </thead>
             <tbody>
@@ -66,10 +66,10 @@
 
         <div class="col-md-2">
           <div class="input-group pt-2">
+            <input type="number" class="form-control" #generarPorNumero placeholder="" >
             <div class="input-group-prepend">
               <button class="btn btn-outline-info" type="button" id="button-addon1" (click)="generarNumeroApuetas(generarPorNumero.value)" ><i class="fas fa-random fa-sm"> Generar</i></button>
             </div>
-            <input type="number" class="form-control" #generarPorNumero placeholder="" >
           </div>
         </div>
 
@@ -99,13 +99,15 @@
                 <th scope="col">N5 </th>
                 <th scope="col">N6 </th>
                 <th scope="col">SUMA </th>
+                <th scope="col"> </th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let apuesta of apuestas;let i = index;"  [ngClass]="{'bg-success': apuesta.marcada}" style="cursor: pointer;" (click)="marcarApuesta(i)">
+              <tr *ngFor="let apuesta of apuestas; let i = index;"  [ngClass]="{'bg-success': apuesta.marcada}" style="cursor: pointer;" >
                 <th scope="row">{{i+1}}</th>
-                <td *ngFor="let numero of apuesta.combinacion"> <span>{{numero}}</span> </td>
+                <td (click)="marcarApuesta(i)" *ngFor="let numero of apuesta.combinacion"> <span>{{numero}}</span> </td>
                 <td> <span>{{apuesta.getSuma()}}</span> </td>
+                <td (click)="borrarApuesta(i)" class="pointer"><i class="fas fa-trash"></i></td>
               </tr>
             </tbody>
           </table>

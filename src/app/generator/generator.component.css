@@ -6,3 +6,7 @@
 .acciones-generar .btn-md{
   padding: 8px !important;
 }
+
+.fa-trash:hover{
+  color:tomato !important;
+}
