@@ -104,7 +104,8 @@ export class GeneratorComponent implements OnInit {
   sortByApariciones() {
     console.log('Ordenando');
     this.records.sort((a, b) => {
-      return (a as CSVRecord).apariciones - (b as CSVRecord).apariciones;
+      //Ordeno por apariciones y a igualdad de apariciones ordeno por número de menor a mayor
+      return (a as CSVRecord).apariciones - (b as CSVRecord).apariciones || (b as CSVRecord).numero - (a as CSVRecord).numero ;
     }).reverse();
   }
 
