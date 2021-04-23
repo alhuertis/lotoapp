@@ -16,7 +16,7 @@ export class GeneratorComponent implements OnInit {
 
   public records: CSVRecord[] = [];
   @ViewChild('csvReader', {static: false}) csvReader: any;
-  public rangeValues: number[] = [110, 200];
+  public rangeValues: number[] = [100, 200];
   public generar = false;
   public apuestas: Apuesta[] = [];
   public contadorNumeros: NumerosLoto[] = [];
@@ -118,6 +118,22 @@ export class GeneratorComponent implements OnInit {
 
   descartarNumero(i: number) {
     (this.records[i] as CSVRecord).descartado = ! (this.records[i] as CSVRecord).descartado;
+    (this.records[i] as CSVRecord).fijo = false;
+  }
+
+  fijarNumero(i: number){
+    this.desmarcarFijo();
+
+    (this.records[i] as CSVRecord).descartado = false;
+    (this.records[i] as CSVRecord).fijo = true; 
+  }
+
+  desmarcarFijo(){
+    this.records.forEach( item => {
+      if (item.fijo) {
+        item.fijo = false;
+      }
+    });
   }
 
 
@@ -157,16 +173,32 @@ export class GeneratorComponent implements OnInit {
 
   crearCombinacion(): Apuesta {
     const apuesta: Apuesta = new Apuesta();
-    let rand = this.getRandomArbitrary(0, 7);
+    let apareceFijo = false;
+    let rand: number;
 
-    while (this.records[rand].descartado) {
-      rand = this.getRandomArbitrary(0, 6);
+    for(let i = 0; i <= 7; i++){
+      if(this.records[i].fijo){
+        apuesta.n1 = this.records[i].numero;
+        apareceFijo= true;
+        break;
+      }
     }
 
-    apuesta.n1 = this.records[rand].numero;
-    apuesta.combinacion.push(this.records[rand].numero);
-    // console.log('rand: ' + rand);
-    // console.log('numero escogido:' + apuesta.n1);
+    if(!apareceFijo){
+      rand = this.getRandomArbitrary(0, 7);
+
+      while (this.records[rand].descartado) {
+        rand = this.getRandomArbitrary(0, 6);
+      }
+
+      apuesta.n1 = this.records[rand].numero;
+      apuesta.combinacion.push(this.records[rand].numero);
+      // console.log('rand: ' + rand);
+      // console.log('numero escogido:' + apuesta.n1);
+
+    }
+
+    
 
     for (let i = 2; i < 6; i++) {
       rand = this.getRandomArbitrary(7, 43);

@@ -1,3 +1,6 @@
+#txtFileUpload{
+  width: 100%;
+}
 
 .table-estadisticas i:hover{
   cursor: pointer;
@@ -7,6 +10,26 @@
   padding: 8px !important;
 }
 
-.fa-trash:hover{
-  color:tomato !important;
+.fa-trash, .fa-trash:hover{
+  color: #d9534f !important
+}
+
+.fa-thumbtack , .fa-thumbtack:hover {
+  color: #f0ad4e !important;
+}
+
+.generar-numero input{
+  height: 100%;
+  border-color: #17a2b8;
+}
+
+.acciones-generar .btn i{
+  min-width: 60px;
+}
+
+#summation{
+  position: relative;
+  top: -8px;
+  width: 25px;
+  margin-right: 5px;
 }

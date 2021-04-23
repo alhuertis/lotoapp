@@ -17,28 +17,31 @@
 
       <div class="row pt-1">
         <div class="col-sm-7">
-          <table class="table table-sm text-center table-hover table-dark table-bordered table-estadisticas" *ngIf="records.length > 0">
+          <table class="table table-sm text-center table-hover table-secondary table-bordered table-estadisticas" *ngIf="records.length > 0">
             <thead>
               <tr>
                 <th scope="col">#</th>
                 <th scope="col" class="pointer" (click)="sortByNumero()">Número</th>
                 <th scope="col" class="pointer" (click)="sortByApariciones()">Apariciones</th>
-                <th scope="col" class="pointer" (click)="desmarcarNumeros()"><i class="fas fa-recycle"></i> </th>
+                <th scope="col" class="pointer" (click)="desmarcarNumeros()"><i class="fas fa-broom"></i> </th>
+                <th scope="col" class="pointer" (click)="desmarcarFijo()"><i class="fas fa-broom"></i> </th>
+
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let record of records;let i = index;" [ngClass]="{'bg-danger': record.descartado}">
+              <tr *ngFor="let record of records;let i = index;" [ngClass]="{'bg-danger': record.descartado, 'bg-warning': record.fijo}">
                 <th scope="row">{{i+1}}</th>
                 <td> <span>{{record.numero}}</span> </td>
                 <td> <span>{{record.apariciones}}</span> </td>
                 <td (click)="descartarNumero(i)" class="pointer"><i class="fas fa-trash"></i></td>
+                <td (click)="fijarNumero(i)" class="pointer"><i class="fas fa-thumbtack"></i></td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <div class="col-sm-5">
-          <table class="table table-sm text-center table-hover table-dark table-bordered table-estadisticas" *ngIf="records.length > 0">
+          <table class="table table-sm text-center table-hover table-light table-bordered table-estadisticas" *ngIf="records.length > 0">
             <thead>
               <tr>
                 <th scope="col">Num </th>
@@ -57,31 +60,27 @@
       </div>
     </div>
 
-    <div class="col-md-9 acciones-generar" *ngIf="generar">
+    <div class="col-md-8 acciones-generar" *ngIf="generar">
       <div class="row">
         <div class="col-md-4" >
-          <h3>Rango de suma: {{rangeValues[0] + ' - ' + rangeValues[1]}}</h3>
+          <div class="text-center">
+            <img class="d-inline" id="summation" src="../../assets/icons/summation.svg" alt="Summation"> 
+            <h3 class="d-inline">{{rangeValues[0] + ' - ' + rangeValues[1]}}</h3>
+          </div>
           <p-slider name="slider" [(ngModel)]="rangeValues" [range]="true" [min]="0" [max]="300"></p-slider>
         </div>
 
-        <div class="col-md-2">
-          <div class="input-group pt-2">
-            <input type="number" class="form-control" #generarPorNumero placeholder="" >
+        <div class="btn-group col-md-4 offset-md-2 " role="group" aria-label="Basic example">
+          
+          <div class="input-group generar-numero">
+            <input type="number" class="form-control" #generarPorNumero placeholder="" value="1"  >
             <div class="input-group-prepend">
-              <button class="btn btn-outline-info" type="button" id="button-addon1" (click)="generarNumeroApuetas(generarPorNumero.value)" ><i class="fas fa-random fa-sm"> Generar</i></button>
+              <button class="btn btn-info" type="button" id="button-addon1" (click)="generarNumeroApuetas(generarPorNumero.value)" ><i class="fas fa-play-circle fa-sm"> Start</i></button>
             </div>
           </div>
-        </div>
-
-        <div class="col-md-1">
-          <button type="button" class="btn btn-info btn-md" (click)="generarApuesta()"> <i class="fas fa-random fa-sm"> Generar</i></button>
-        </div>
-
-        <div class="col-md-1">
-          <button type="button" class="btn btn-info btn-md" (click)="limpiar()"><i class="fas fa-broom fa-sm"> Clean </i> </button>
-        </div>
-        <div class="col-md-1">
-          <button type="button" class="btn btn-info btn-md" (click)="exportAsXLSX()"><i class="fas fa-file-excel fa-sm"> Export</i> </button>
+          <!--<button type="button" class="btn btn-info" (click)="generarApuesta()"> <i class="fas fa-random fa-sm"> Generar</i></button>-->
+          <button type="button" class="btn btn-info" (click)="limpiar()"><i class="fas fa-broom fa-sm"> Clean </i> </button>
+          <button type="button" class="btn btn-info" (click)="exportAsXLSX()"><i class="fas fa-file-excel fa-sm"> Export</i> </button>
         </div>
 
       </div>
@@ -92,13 +91,13 @@
             <thead class="thead-dark">
               <tr>
                 <th scope="col">#</th>
-                <th scope="col">N1 </th>
-                <th scope="col">N2 </th>
-                <th scope="col">N3 </th>
-                <th scope="col">N4 </th>
-                <th scope="col">N5 </th>
-                <th scope="col">N6 </th>
-                <th scope="col">SUMA </th>
+                <th scope="col">1 </th>
+                <th scope="col">2 </th>
+                <th scope="col">3 </th>
+                <th scope="col">4 </th>
+                <th scope="col">5 </th>
+                <th scope="col">6 </th>
+                <th scope="col">suma </th>
                 <th scope="col"> </th>
               </tr>
             </thead>
