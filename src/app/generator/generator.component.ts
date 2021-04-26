@@ -178,6 +178,7 @@ export class GeneratorComponent implements OnInit {
     let apareceFijo = false;
     let rand: number;
 
+    //CALCULAMOS EL BLOQUE 1/3
     for(let i = 0; i < 7; i++){
       if(this.records[i].fijo){
         apuesta.n1 = this.records[i].numero;
@@ -198,11 +199,11 @@ export class GeneratorComponent implements OnInit {
       apuesta.combinacion.push(this.records[rand].numero);
       // console.log('rand: ' + rand);
       // console.log('numero escogido:' + apuesta.n1);
-
     }
+    //FIN CALCULO BLOQUE 1/3
 
     
-
+    //CALCULAMOS EL BLOQUE 2/3
     for (let i = 2; i < 6; i++) {
       rand = this.getRandomArbitrary(7, 43);
       while (this.records[rand].descartado || apuesta.estaRepetido(this.records[rand].numero)) {
@@ -217,13 +218,41 @@ export class GeneratorComponent implements OnInit {
       }
     } // fin for
 
-    rand = this.getRandomArbitrary(43, 49);
+    //buscamos si hay valor fijo en el segundo bloque y lo ponermos en n2
+    if(!apareceFijo){
+      for(let i= 7; i < 43; i++){
+        if(this.records[i].fijo && !apuesta.estaRepetido(this.records[i].numero)){ //Si ya está repetido quiere decir que el numero fijo ya ha salido
+          apuesta.n5 = this.records[i].numero;
+          apuesta.combinacion.splice(4,1); //Borro la ultima posición del array de combinaciones para insertar el numero fijo en la ultima posición. 
+          apuesta.combinacion.push(this.records[i].numero);
+          apareceFijo = true; 
+          break;
+        }
+      }
+    }
+    //FIN DEL CALCULO BLOQUE 2/3
 
+    //CALCULAMOS EL BLOQUE 3/3
+
+    rand = this.getRandomArbitrary(43, 49);
     while (this.records[rand].descartado) {
       rand = this.getRandomArbitrary(43, 49);
     }
     apuesta.n6 = this.records[rand].numero;
     apuesta.combinacion.push(this.records[rand].numero);
+
+    if(!apareceFijo){
+      for(let i = 43; i < 49; i++){
+        if(this.records[i].fijo && !apuesta.estaRepetido(this.records[i].numero)){ //Si ya está repetido quiere decir que el numero fijo ya ha salido
+          apuesta.n6 = this.records[i].numero;
+          apuesta.combinacion.splice(5,1); //Borro la ultima posición del array de combinaciones para insertar el numero fijo en la ultima posición. 
+          apuesta.combinacion.push(this.records[i].numero);
+          break;
+        }
+      }
+    }
+
+    //FIN DEL CALCULO BLOQUE 3/3
 
     apuesta.combinacion.sort((a, b) => a - b);
     apuesta.printApuesta();
