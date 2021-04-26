@@ -20,13 +20,14 @@ export class GeneratorComponent implements OnInit {
   public generar = false;
   public apuestas: Apuesta[] = [];
   public contadorNumeros: NumerosLoto[] = [];
-  public numeroFijo: number;
+  public reintegro: number;
 
   constructor(private excelService: ExcelService) { }
 
   ngOnInit() {
 
     this.resetContadorNumeros();
+    this.calcularReintegro();
   }
 
   uploadListener($event: any): void {
@@ -123,9 +124,7 @@ export class GeneratorComponent implements OnInit {
   }
 
   fijarNumero(i: number){
-    this.numeroFijo= i;
     this.desmarcarFijo(i);
-
     (this.records[i] as CSVRecord).descartado = false;
     (this.records[i] as CSVRecord).fijo = !(this.records[i] as CSVRecord).fijo; 
   }
@@ -183,6 +182,7 @@ export class GeneratorComponent implements OnInit {
       if(this.records[i].fijo){
         apuesta.n1 = this.records[i].numero;
         apuesta.combinacion.push(this.records[i].numero);
+        apuesta.numFijo = this.records[i].numero;
         apareceFijo= true;
         break;
       }
@@ -225,6 +225,7 @@ export class GeneratorComponent implements OnInit {
           apuesta.n5 = this.records[i].numero;
           apuesta.combinacion.splice(4,1); //Borro la ultima posición del array de combinaciones para insertar el numero fijo en la ultima posición. 
           apuesta.combinacion.push(this.records[i].numero);
+          apuesta.numFijo = this.records[i].numero;
           apareceFijo = true; 
           break;
         }
@@ -247,6 +248,7 @@ export class GeneratorComponent implements OnInit {
           apuesta.n6 = this.records[i].numero;
           apuesta.combinacion.splice(5,1); //Borro la ultima posición del array de combinaciones para insertar el numero fijo en la ultima posición. 
           apuesta.combinacion.push(this.records[i].numero);
+          apuesta.numFijo = this.records[i].numero;
           break;
         }
       }
@@ -344,6 +346,7 @@ export class GeneratorComponent implements OnInit {
       this.contadorNumeros[i] = new NumerosLoto(i + 1);
     }
     this.apuestas = [];
+    this.calcularReintegro();
   }
 
   exportAsXLSX(): void {
@@ -381,5 +384,17 @@ export class GeneratorComponent implements OnInit {
     }
   }
 
+  calcularReintegro(){
+    this.reintegro = this.getRandomArbitrary(0, 10);
+  }
+
+  ordenarApuestas(){
+    this.apuestas = this.apuestas.sort((a, b) => {
+      if (a.combinacion[0] == b.combinacion[0]) {
+        return a.combinacion[1] - b.combinacion[1] || a.combinacion[2] - b.combinacion[2];
+      }
+      return a.combinacion[0] - b.combinacion[0];
+    });
+  }
 
 }

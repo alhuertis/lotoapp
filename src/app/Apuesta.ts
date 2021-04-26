@@ -6,12 +6,14 @@ export class Apuesta {
   public n5: number;
   public n6: number;
   public marcada: boolean;
+  public numFijo: number;
 
   public combinacion: any[] = [];
 
   printApuesta() {
     console.log('Apuesta: ' + this.n1 + ' ' + this.n2 + ' ' + this.n3 + ' ' + this.n4 + ' ' + this.n5 + ' ' + this.n6 );
     console.log(this.combinacion);
+    console.log("Numero fijo: " + this.numFijo);
   }
 
   getSuma() {
