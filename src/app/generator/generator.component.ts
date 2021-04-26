@@ -20,6 +20,7 @@ export class GeneratorComponent implements OnInit {
   public generar = false;
   public apuestas: Apuesta[] = [];
   public contadorNumeros: NumerosLoto[] = [];
+  public numeroFijo: number;
 
   constructor(private excelService: ExcelService) { }
 
@@ -122,15 +123,16 @@ export class GeneratorComponent implements OnInit {
   }
 
   fijarNumero(i: number){
-    this.desmarcarFijo();
+    this.numeroFijo= i;
+    this.desmarcarFijo(i);
 
     (this.records[i] as CSVRecord).descartado = false;
-    (this.records[i] as CSVRecord).fijo = true; 
+    (this.records[i] as CSVRecord).fijo = !(this.records[i] as CSVRecord).fijo; 
   }
 
-  desmarcarFijo(){
-    this.records.forEach( item => {
-      if (item.fijo) {
+  desmarcarFijo(i: number){
+    this.records.forEach( (item, index) => {
+      if (item.fijo && index !== i) { //demarco todos menos el que ya estaba marcado
         item.fijo = false;
       }
     });
@@ -176,9 +178,10 @@ export class GeneratorComponent implements OnInit {
     let apareceFijo = false;
     let rand: number;
 
-    for(let i = 0; i <= 7; i++){
+    for(let i = 0; i < 7; i++){
       if(this.records[i].fijo){
         apuesta.n1 = this.records[i].numero;
+        apuesta.combinacion.push(this.records[i].numero);
         apareceFijo= true;
         break;
       }
@@ -188,7 +191,7 @@ export class GeneratorComponent implements OnInit {
       rand = this.getRandomArbitrary(0, 7);
 
       while (this.records[rand].descartado) {
-        rand = this.getRandomArbitrary(0, 6);
+        rand = this.getRandomArbitrary(0, 7);
       }
 
       apuesta.n1 = this.records[rand].numero;
